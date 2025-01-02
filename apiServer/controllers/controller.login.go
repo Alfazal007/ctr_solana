@@ -56,6 +56,7 @@ func (apiCfg *ApiConf) LoginUser(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Secure:   false,
 		SameSite: http.SameSiteNoneMode,
+		Path:     "/",
 	}
 	http.SetCookie(w, &cookie)
 	helpers.RespondWithJSON(w, 200,

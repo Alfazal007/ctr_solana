@@ -9,5 +9,5 @@ create table users (
 );
 
 -- +goose Down
-drop table users;
 drop type user_role;
+drop table users;
