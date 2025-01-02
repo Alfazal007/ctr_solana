@@ -21,6 +21,9 @@ func LoadEnvVariables() *EnvVariables {
 	port := os.Getenv("PORT")
 	dbUrl := os.Getenv("DATABASE_URL")
 	accessToken := os.Getenv("ACCESS_TOKEN_SECRET")
+	if port == "" || dbUrl == "" || accessToken == "" {
+		log.Fatal("Env variables are not all given")
+	}
 
 	return &EnvVariables{
 		Port:              port,
