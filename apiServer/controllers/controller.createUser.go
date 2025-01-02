@@ -74,5 +74,5 @@ func (apiCfg *ApiConf) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	helpers.RespondWithJSON(w, 200, typeconvertor.UserConvertor(user))
+	helpers.RespondWithJSON(w, 201, typeconvertor.UserConvertor(user))
 }

@@ -7,3 +7,7 @@ insert into users
 select count(*) from users
 	where username=$1 limit 1;
 
+-- name: GetUserByUsername :one
+select * from users
+	where username=$1 limit 1;
+
