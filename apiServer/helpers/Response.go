@@ -6,15 +6,14 @@ import (
 	"net/http"
 )
 
-func RespondWithError(w http.ResponseWriter, code int, msg string, validationErrors []string) {
+func RespondWithError(w http.ResponseWriter, code int, msg string) {
 	if code > 499 {
 		log.Println("Responding with 5xx error:", msg)
 	}
 	type errResponse struct {
-		Error            string   `json:"error"`
-		ValidationErrors []string `json:"validationErrors"`
+		Error string `json:"error"`
 	}
-	RespondWithJSON(w, code, errResponse{Error: msg, ValidationErrors: validationErrors})
+	RespondWithJSON(w, code, errResponse{Error: msg})
 }
 
 func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {

@@ -11,20 +11,38 @@ import (
 	"github.com/google/uuid"
 )
 
+const checkSimilarUserExists = `-- name: CheckSimilarUserExists :one
+select count(*) from users
+	where username=$1 limit 1
+`
+
+func (q *Queries) CheckSimilarUserExists(ctx context.Context, username string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, checkSimilarUserExists, username)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createUser = `-- name: CreateUser :one
 insert into users
-    (id, username, password)
-        values ($1, $2, $3) returning id, username, password, role
+    (id, username, password, role)
+        values ($1, $2, $3, $4) returning id, username, password, role
 `
 
 type CreateUserParams struct {
 	ID       uuid.UUID
 	Username string
 	Password string
+	Role     NullUserRole
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.ID, arg.Username, arg.Password)
+	row := q.db.QueryRowContext(ctx, createUser,
+		arg.ID,
+		arg.Username,
+		arg.Password,
+		arg.Role,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,
