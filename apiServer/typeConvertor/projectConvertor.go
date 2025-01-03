@@ -12,6 +12,6 @@ func ProjectConvertor(project database.Project) ProjectToBeReturned {
 	return ProjectToBeReturned{
 		Name:      project.Name,
 		Id:        project.ID.String(),
-		CreatorId: project.CreatorID.UUID.String(),
+		CreatorId: project.CreatorID.String(),
 	}
 }

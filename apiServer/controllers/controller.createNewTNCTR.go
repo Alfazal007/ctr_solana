@@ -32,12 +32,9 @@ func (apiCfg *ApiConf) CreateNewCTR(w http.ResponseWriter, r *http.Request) {
 	}
 
 	newProject, err := apiCfg.DB.CreateProject(r.Context(), database.CreateProjectParams{
-		ID:   uuid.New(),
-		Name: createNewCTRType.Name,
-		CreatorID: uuid.NullUUID{
-			Valid: true,
-			UUID:  user.ID,
-		},
+		ID:        uuid.New(),
+		Name:      createNewCTRType.Name,
+		CreatorID: user.ID,
 	})
 	if err != nil {
 		helpers.RespondWithError(w, 400, "Issue creating new project, try changing the project name")

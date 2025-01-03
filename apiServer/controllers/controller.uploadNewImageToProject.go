@@ -39,7 +39,7 @@ func (apiCfg *ApiConf) GetUrlToUploadImage(w http.ResponseWriter, r *http.Reques
 		helpers.RespondWithError(w, 400, "Issue finding the project")
 		return
 	}
-	if user.ID != project.CreatorID.UUID {
+	if user.ID != project.CreatorID {
 		helpers.RespondWithError(w, 400, "You are not the creator")
 		return
 	}

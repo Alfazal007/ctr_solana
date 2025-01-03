@@ -57,8 +57,9 @@ func (ns NullUserRole) Value() (driver.Value, error) {
 type Project struct {
 	ID        uuid.UUID
 	Name      string
+	Started   sql.NullBool
 	Completed sql.NullBool
-	CreatorID uuid.NullUUID
+	CreatorID uuid.UUID
 }
 
 type ProjectImage struct {

@@ -14,13 +14,13 @@ import (
 const createProject = `-- name: CreateProject :one
 insert into project
     (id, name, creator_id)
-        values ($1, $2, $3) returning id, name, completed, creator_id
+        values ($1, $2, $3) returning id, name, started, completed, creator_id
 `
 
 type CreateProjectParams struct {
 	ID        uuid.UUID
 	Name      string
-	CreatorID uuid.NullUUID
+	CreatorID uuid.UUID
 }
 
 func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (Project, error) {
@@ -29,6 +29,25 @@ func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (P
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
+		&i.Started,
+		&i.Completed,
+		&i.CreatorID,
+	)
+	return i, err
+}
+
+const endProject = `-- name: EndProject :one
+update project set completed=true
+	where id=$1 returning id, name, started, completed, creator_id
+`
+
+func (q *Queries) EndProject(ctx context.Context, id uuid.UUID) (Project, error) {
+	row := q.db.QueryRowContext(ctx, endProject, id)
+	var i Project
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Started,
 		&i.Completed,
 		&i.CreatorID,
 	)
@@ -36,7 +55,7 @@ func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (P
 }
 
 const getExistingProject = `-- name: GetExistingProject :one
-select id, name, completed, creator_id from project
+select id, name, started, completed, creator_id from project
 	where name=$1
 `
 
@@ -46,6 +65,7 @@ func (q *Queries) GetExistingProject(ctx context.Context, name string) (Project,
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
+		&i.Started,
 		&i.Completed,
 		&i.CreatorID,
 	)
@@ -53,7 +73,7 @@ func (q *Queries) GetExistingProject(ctx context.Context, name string) (Project,
 }
 
 const getExistingProjectById = `-- name: GetExistingProjectById :one
-select id, name, completed, creator_id from project
+select id, name, started, completed, creator_id from project
 	where id=$1
 `
 
@@ -63,6 +83,25 @@ func (q *Queries) GetExistingProjectById(ctx context.Context, id uuid.UUID) (Pro
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
+		&i.Started,
+		&i.Completed,
+		&i.CreatorID,
+	)
+	return i, err
+}
+
+const startProject = `-- name: StartProject :one
+update project set started=true
+	where id=$1 returning id, name, started, completed, creator_id
+`
+
+func (q *Queries) StartProject(ctx context.Context, id uuid.UUID) (Project, error) {
+	row := q.db.QueryRowContext(ctx, startProject, id)
+	var i Project
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Started,
 		&i.Completed,
 		&i.CreatorID,
 	)

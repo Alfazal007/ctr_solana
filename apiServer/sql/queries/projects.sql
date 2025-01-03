@@ -11,3 +11,10 @@ select * from project
 select * from project
 	where id=$1;
 
+-- name: StartProject :one
+update project set started=true
+	where id=$1 returning *;
+
+-- name: EndProject :one
+update project set completed=true
+	where id=$1 returning *;
