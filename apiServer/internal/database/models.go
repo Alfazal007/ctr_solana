@@ -62,8 +62,9 @@ type Project struct {
 }
 
 type ProjectImage struct {
-	ID        uuid.UUID
-	ProjectID uuid.NullUUID
+	PublicID  string
+	ProjectID uuid.UUID
+	SecureUrl string
 }
 
 type User struct {

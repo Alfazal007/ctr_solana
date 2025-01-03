@@ -60,12 +60,21 @@ func (apiCfg *ApiConf) GetUrlToUploadImage(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	defer file.Close()
-	_, err = apiCfg.Cloudinary.Upload.Upload(r.Context(), file, uploader.UploadParams{
+	cloudinaryRes, err := apiCfg.Cloudinary.Upload.Upload(r.Context(), file, uploader.UploadParams{
 		Folder:       "web3ctr/" + user.ID.String() + "/" + projectId + "/",
 		ResourceType: "image",
 	})
 	if err != nil {
 		helpers.RespondWithError(w, 400, "Issue uploading to cloudinary")
+		return
+	}
+	_, err = apiCfg.DB.CreateProjectImage(r.Context(), database.CreateProjectImageParams{
+		PublicID:  cloudinaryRes.PublicID,
+		ProjectID: project.ID,
+		SecureUrl: cloudinaryRes.SecureURL,
+	})
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Issue saving state in the database")
 		return
 	}
 	helpers.RespondWithJSON(w, 200, SuccessMessage{Message: "Uploaded image successfully"})
