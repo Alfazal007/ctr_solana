@@ -5,6 +5,7 @@
 package database
 
 import (
+	"database/sql"
 	"database/sql/driver"
 	"fmt"
 
@@ -56,6 +57,7 @@ func (ns NullUserRole) Value() (driver.Value, error) {
 type Project struct {
 	ID        uuid.UUID
 	Name      string
+	Completed sql.NullBool
 	CreatorID uuid.NullUUID
 }
 

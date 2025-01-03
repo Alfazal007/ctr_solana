@@ -10,6 +10,7 @@ import (
 	"github.com/Alfazal007/ctr_solana/internal/database"
 	router "github.com/Alfazal007/ctr_solana/routes"
 	"github.com/Alfazal007/ctr_solana/utils"
+	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
@@ -25,7 +26,12 @@ func main() {
 		log.Fatal("Issue connecting to the database", err)
 	}
 
-	apiCfg := controllers.ApiConf{DB: database.New(conn)}
+	cloudinary, err := cloudinary.NewFromParams(envVariables.CloudinaryCloudName, envVariables.CloudinaryApiKey, envVariables.CloudinaryApiSecret)
+	if err != nil {
+		log.Fatal("Issue connecting to cloudinary", err)
+	}
+
+	apiCfg := controllers.ApiConf{DB: database.New(conn), Cloudinary: cloudinary}
 
 	// SETUP A ROUTER TO HANDLE REQUESTS
 	r := chi.NewRouter()

@@ -8,9 +8,12 @@ import (
 )
 
 type EnvVariables struct {
-	Port              string
-	DatabaseUrl       string
-	AccessTokenSecret string
+	Port                string
+	DatabaseUrl         string
+	AccessTokenSecret   string
+	CloudinaryCloudName string
+	CloudinaryApiKey    string
+	CloudinaryApiSecret string
 }
 
 func LoadEnvVariables() *EnvVariables {
@@ -21,13 +24,19 @@ func LoadEnvVariables() *EnvVariables {
 	port := os.Getenv("PORT")
 	dbUrl := os.Getenv("DATABASE_URL")
 	accessToken := os.Getenv("ACCESS_TOKEN_SECRET")
-	if port == "" || dbUrl == "" || accessToken == "" {
+	cloudname := os.Getenv("CLOUDINARYCLOUDNAME")
+	cloudapikey := os.Getenv("CLOUDINARYAPIKEY")
+	cloudapisecret := os.Getenv("CLOUDINARYAPISECRET")
+	if port == "" || dbUrl == "" || accessToken == "" || cloudname == "" || cloudapikey == "" || cloudapisecret == "" {
 		log.Fatal("Env variables are not all given")
 	}
 
 	return &EnvVariables{
-		Port:              port,
-		DatabaseUrl:       dbUrl,
-		AccessTokenSecret: accessToken,
+		Port:                port,
+		DatabaseUrl:         dbUrl,
+		AccessTokenSecret:   accessToken,
+		CloudinaryCloudName: cloudname,
+		CloudinaryApiKey:    cloudapikey,
+		CloudinaryApiSecret: cloudapisecret,
 	}
 }

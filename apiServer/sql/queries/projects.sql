@@ -6,3 +6,8 @@ insert into project
 -- name: GetExistingProject :one
 select * from project
 	where name=$1;
+
+-- name: GetExistingProjectById :one
+select * from project
+	where id=$1;
+

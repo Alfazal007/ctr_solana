@@ -10,5 +10,6 @@ import (
 func ProjectRouter(apiCfg *controllers.ApiConf) *chi.Mux {
 	r := chi.NewRouter()
 	r.Post("/create-project", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.CreateNewCTR)).ServeHTTP)
+	r.Post("/add-image/{projectId}", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.GetUrlToUploadImage)).ServeHTTP)
 	return r
 }

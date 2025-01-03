@@ -11,6 +11,9 @@ require (
 )
 
 require (
+	github.com/cloudinary/cloudinary-go/v2 v2.9.0 // indirect
+	github.com/creasty/defaults v1.7.0 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
+	github.com/gorilla/schema v1.4.1 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
 )

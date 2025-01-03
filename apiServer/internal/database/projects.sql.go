@@ -14,7 +14,7 @@ import (
 const createProject = `-- name: CreateProject :one
 insert into project
     (id, name, creator_id)
-        values ($1, $2, $3) returning id, name, creator_id
+        values ($1, $2, $3) returning id, name, completed, creator_id
 `
 
 type CreateProjectParams struct {
@@ -26,18 +26,45 @@ type CreateProjectParams struct {
 func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (Project, error) {
 	row := q.db.QueryRowContext(ctx, createProject, arg.ID, arg.Name, arg.CreatorID)
 	var i Project
-	err := row.Scan(&i.ID, &i.Name, &i.CreatorID)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Completed,
+		&i.CreatorID,
+	)
 	return i, err
 }
 
 const getExistingProject = `-- name: GetExistingProject :one
-select id, name, creator_id from project
+select id, name, completed, creator_id from project
 	where name=$1
 `
 
 func (q *Queries) GetExistingProject(ctx context.Context, name string) (Project, error) {
 	row := q.db.QueryRowContext(ctx, getExistingProject, name)
 	var i Project
-	err := row.Scan(&i.ID, &i.Name, &i.CreatorID)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Completed,
+		&i.CreatorID,
+	)
+	return i, err
+}
+
+const getExistingProjectById = `-- name: GetExistingProjectById :one
+select id, name, completed, creator_id from project
+	where id=$1
+`
+
+func (q *Queries) GetExistingProjectById(ctx context.Context, id uuid.UUID) (Project, error) {
+	row := q.db.QueryRowContext(ctx, getExistingProjectById, id)
+	var i Project
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Completed,
+		&i.CreatorID,
+	)
 	return i, err
 }
