@@ -70,6 +70,7 @@ type Project struct {
 	Started   sql.NullBool
 	Completed sql.NullBool
 	CreatorID uuid.UUID
+	Votes     int32
 }
 
 type ProjectImage struct {
@@ -83,4 +84,10 @@ type User struct {
 	Username string
 	Password string
 	Role     NullUserRole
+}
+
+type Vote struct {
+	VoterID   uuid.UUID
+	ProjectID uuid.UUID
+	PublicID  string
 }

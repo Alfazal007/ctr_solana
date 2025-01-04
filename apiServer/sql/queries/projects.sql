@@ -24,3 +24,8 @@ select count(*) from project
 	where started=true 
 		AND completed=false
 			AND creator_id=$1 limit 1;
+
+-- name: IncreaseVoteCount :exec
+update project set votes=$1
+	where id=$2;
+

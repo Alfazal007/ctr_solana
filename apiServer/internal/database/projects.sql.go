@@ -28,7 +28,7 @@ func (q *Queries) CountRunningProjects(ctx context.Context, creatorID uuid.UUID)
 const createProject = `-- name: CreateProject :one
 insert into project
     (id, name, creator_id)
-        values ($1, $2, $3) returning id, name, started, completed, creator_id
+        values ($1, $2, $3) returning id, name, started, completed, creator_id, votes
 `
 
 type CreateProjectParams struct {
@@ -46,13 +46,14 @@ func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (P
 		&i.Started,
 		&i.Completed,
 		&i.CreatorID,
+		&i.Votes,
 	)
 	return i, err
 }
 
 const endProject = `-- name: EndProject :one
 update project set completed=true
-	where id=$1 returning id, name, started, completed, creator_id
+	where id=$1 returning id, name, started, completed, creator_id, votes
 `
 
 func (q *Queries) EndProject(ctx context.Context, id uuid.UUID) (Project, error) {
@@ -64,12 +65,13 @@ func (q *Queries) EndProject(ctx context.Context, id uuid.UUID) (Project, error)
 		&i.Started,
 		&i.Completed,
 		&i.CreatorID,
+		&i.Votes,
 	)
 	return i, err
 }
 
 const getExistingProject = `-- name: GetExistingProject :one
-select id, name, started, completed, creator_id from project
+select id, name, started, completed, creator_id, votes from project
 	where name=$1
 `
 
@@ -82,12 +84,13 @@ func (q *Queries) GetExistingProject(ctx context.Context, name string) (Project,
 		&i.Started,
 		&i.Completed,
 		&i.CreatorID,
+		&i.Votes,
 	)
 	return i, err
 }
 
 const getExistingProjectById = `-- name: GetExistingProjectById :one
-select id, name, started, completed, creator_id from project
+select id, name, started, completed, creator_id, votes from project
 	where id=$1
 `
 
@@ -100,13 +103,29 @@ func (q *Queries) GetExistingProjectById(ctx context.Context, id uuid.UUID) (Pro
 		&i.Started,
 		&i.Completed,
 		&i.CreatorID,
+		&i.Votes,
 	)
 	return i, err
 }
 
+const increaseVoteCount = `-- name: IncreaseVoteCount :exec
+update project set votes=$1
+	where id=$2
+`
+
+type IncreaseVoteCountParams struct {
+	Votes int32
+	ID    uuid.UUID
+}
+
+func (q *Queries) IncreaseVoteCount(ctx context.Context, arg IncreaseVoteCountParams) error {
+	_, err := q.db.ExecContext(ctx, increaseVoteCount, arg.Votes, arg.ID)
+	return err
+}
+
 const startProject = `-- name: StartProject :one
 update project set started=true
-	where id=$1 returning id, name, started, completed, creator_id
+	where id=$1 returning id, name, started, completed, creator_id, votes
 `
 
 func (q *Queries) StartProject(ctx context.Context, id uuid.UUID) (Project, error) {
@@ -118,6 +137,7 @@ func (q *Queries) StartProject(ctx context.Context, id uuid.UUID) (Project, erro
 		&i.Started,
 		&i.Completed,
 		&i.CreatorID,
+		&i.Votes,
 	)
 	return i, err
 }

@@ -11,6 +11,21 @@ import (
 	"github.com/google/uuid"
 )
 
+const deductCreatorBalance = `-- name: DeductCreatorBalance :exec
+update creator_balance
+	set lamports=$1 where creator_id=$2
+`
+
+type DeductCreatorBalanceParams struct {
+	Lamports  string
+	CreatorID uuid.UUID
+}
+
+func (q *Queries) DeductCreatorBalance(ctx context.Context, arg DeductCreatorBalanceParams) error {
+	_, err := q.db.ExecContext(ctx, deductCreatorBalance, arg.Lamports, arg.CreatorID)
+	return err
+}
+
 const getCreatorBalance = `-- name: GetCreatorBalance :one
 select creator_id, lamports from creator_balance
 	where creator_id=$1

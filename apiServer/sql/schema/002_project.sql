@@ -5,6 +5,7 @@ create table project (
   started boolean default false,
   completed boolean default false,
   creator_id uuid not null,
+  votes int default 0 not null,
   FOREIGN KEY(creator_id) REFERENCES users(id) on delete cascade
 );
 

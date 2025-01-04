@@ -65,7 +65,7 @@ func (apiCfg *ApiConf) StartVote(w http.ResponseWriter, r *http.Request) {
 
 	balanceInI64, err := strconv.ParseInt(balance.Lamports, 10, 64)
 	if err != nil {
-		helpers.RespondWithError(w, 400, "Issue converting the balance to string")
+		helpers.RespondWithError(w, 400, "Issue converting the balance from string")
 		return
 	}
 

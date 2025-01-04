@@ -7,3 +7,7 @@ insert into project_images
 select * from project_images
 	where project_id=$1;
 
+-- name: GetImageByPublicId :one
+select * from project_images
+	where public_id=$1 and project_id=$2;
+

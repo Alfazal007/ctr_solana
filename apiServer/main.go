@@ -31,7 +31,7 @@ func main() {
 		log.Fatal("Issue connecting to cloudinary", err)
 	}
 
-	apiCfg := controllers.ApiConf{DB: database.New(conn), Cloudinary: cloudinary}
+	apiCfg := controllers.ApiConf{DB: database.New(conn), Cloudinary: cloudinary, SQLDB: conn}
 
 	// SETUP A ROUTER TO HANDLE REQUESTS
 	r := chi.NewRouter()

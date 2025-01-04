@@ -30,6 +30,23 @@ func (q *Queries) CreateProjectImage(ctx context.Context, arg CreateProjectImage
 	return i, err
 }
 
+const getImageByPublicId = `-- name: GetImageByPublicId :one
+select public_id, project_id, secure_url from project_images
+	where public_id=$1 and project_id=$2
+`
+
+type GetImageByPublicIdParams struct {
+	PublicID  string
+	ProjectID uuid.UUID
+}
+
+func (q *Queries) GetImageByPublicId(ctx context.Context, arg GetImageByPublicIdParams) (ProjectImage, error) {
+	row := q.db.QueryRowContext(ctx, getImageByPublicId, arg.PublicID, arg.ProjectID)
+	var i ProjectImage
+	err := row.Scan(&i.PublicID, &i.ProjectID, &i.SecureUrl)
+	return i, err
+}
+
 const getProjectImages = `-- name: GetProjectImages :many
 select public_id, project_id, secure_url from project_images
 	where project_id=$1
