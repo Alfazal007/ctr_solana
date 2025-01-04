@@ -39,6 +39,17 @@ func (apiCfg *ApiConf) StartVote(w http.ResponseWriter, r *http.Request) {
 		helpers.RespondWithJSON(w, 200, "Already started")
 		return
 	}
+	// check if there is some other project which is already started
+	countRunningTasks, err := apiCfg.DB.CountRunningProjects(r.Context(), user.ID)
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Issue talking to the database")
+		return
+	}
+	if countRunningTasks > 0 {
+		helpers.RespondWithError(w, 400, "Complete the previous project to start the new project")
+		return
+	}
+
 	_, err = apiCfg.DB.StartProject(r.Context(), project.ID)
 	if err != nil {
 		helpers.RespondWithError(w, 400, "Issue starting the project")
