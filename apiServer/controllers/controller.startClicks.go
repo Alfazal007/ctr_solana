@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/Alfazal007/ctr_solana/helpers"
 	"github.com/Alfazal007/ctr_solana/internal/database"
@@ -47,6 +49,28 @@ func (apiCfg *ApiConf) StartVote(w http.ResponseWriter, r *http.Request) {
 	}
 	if countRunningTasks > 0 {
 		helpers.RespondWithError(w, 400, "Complete the previous project to start the new project")
+		return
+	}
+
+	// check balance in user account
+	balance, err := apiCfg.DB.GetCreatorBalance(r.Context(), project.CreatorID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			helpers.RespondWithError(w, 400, "No minimum balance to start the project")
+			return
+		}
+		helpers.RespondWithError(w, 400, "Issue fetching the balance")
+		return
+	}
+
+	balanceInI64, err := strconv.ParseInt(balance.Lamports, 10, 64)
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Issue converting the balance to string")
+		return
+	}
+
+	if balanceInI64 < 600000000 {
+		helpers.RespondWithError(w, 400, "Not enough balance")
 		return
 	}
 
