@@ -1,5 +1,5 @@
 For payments, the front-end will provide an endpoint with an address for creator to deposit money.
-The address will be the website owner's solana address to which the creator is supposed to send solana.
-Each task required about 0.6 SOL and 0.1 SOL will be website owner's.
-Remaining 0.5 dollars will be sent in to the voters 0.01 for each.
-A creator cannot start 2 projects at the same time to handle payments in a easy way.
+
+TODOS:: A web hook or talk to blockchain and monitor a specific address.
+Update the balances of Creators.
+Write logic to return the balances to labellers.
