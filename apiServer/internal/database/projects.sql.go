@@ -11,6 +11,20 @@ import (
 	"github.com/google/uuid"
 )
 
+const countRunningProjects = `-- name: CountRunningProjects :one
+select count(*) from project 
+	where started=true 
+		AND completed=false
+			AND creator_id=$1 limit 1
+`
+
+func (q *Queries) CountRunningProjects(ctx context.Context, creatorID uuid.UUID) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countRunningProjects, creatorID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createProject = `-- name: CreateProject :one
 insert into project
     (id, name, creator_id)

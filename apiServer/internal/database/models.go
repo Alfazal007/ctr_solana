@@ -54,6 +54,16 @@ func (ns NullUserRole) Value() (driver.Value, error) {
 	return string(ns.UserRole), nil
 }
 
+type CreatorBalance struct {
+	CreatorID uuid.UUID
+	Lamports  string
+}
+
+type LabellerBalance struct {
+	LabellerID uuid.UUID
+	Lamports   string
+}
+
 type Project struct {
 	ID        uuid.UUID
 	Name      string

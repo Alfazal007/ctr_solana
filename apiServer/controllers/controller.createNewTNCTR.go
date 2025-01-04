@@ -30,6 +30,16 @@ func (apiCfg *ApiConf) CreateNewCTR(w http.ResponseWriter, r *http.Request) {
 		helpers.RespondWithError(w, 400, "The project name should be greater than 1 and less than 20(inclusive)")
 		return
 	}
+	// check if the other projects are over or not
+	countRunningTasks, err := apiCfg.DB.CountRunningProjects(r.Context(), user.ID)
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Issue talking to the database")
+		return
+	}
+	if countRunningTasks > 0 {
+		helpers.RespondWithError(w, 400, "Complete the previous project to start the new project")
+		return
+	}
 
 	newProject, err := apiCfg.DB.CreateProject(r.Context(), database.CreateProjectParams{
 		ID:        uuid.New(),
