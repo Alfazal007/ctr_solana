@@ -14,6 +14,7 @@ type EnvVariables struct {
 	CloudinaryCloudName string
 	CloudinaryApiKey    string
 	CloudinaryApiSecret string
+	ApiSecret           string
 }
 
 func LoadEnvVariables() *EnvVariables {
@@ -27,7 +28,8 @@ func LoadEnvVariables() *EnvVariables {
 	cloudname := os.Getenv("CLOUDINARYCLOUDNAME")
 	cloudapikey := os.Getenv("CLOUDINARYAPIKEY")
 	cloudapisecret := os.Getenv("CLOUDINARYAPISECRET")
-	if port == "" || dbUrl == "" || accessToken == "" || cloudname == "" || cloudapikey == "" || cloudapisecret == "" {
+	apiSecretForBalance := os.Getenv("SECRET")
+	if port == "" || dbUrl == "" || accessToken == "" || cloudname == "" || cloudapikey == "" || cloudapisecret == "" || apiSecretForBalance == "" {
 		log.Fatal("Env variables are not all given")
 	}
 
@@ -38,5 +40,6 @@ func LoadEnvVariables() *EnvVariables {
 		CloudinaryCloudName: cloudname,
 		CloudinaryApiKey:    cloudapikey,
 		CloudinaryApiSecret: cloudapisecret,
+		ApiSecret:           apiSecretForBalance,
 	}
 }

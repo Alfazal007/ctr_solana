@@ -1,6 +1,6 @@
 import web3, { ConfirmedSignatureInfo, ParsedInstruction } from '@solana/web3.js';
 import { configDotenv } from 'dotenv';
-import { prisma } from './prisma';
+import axios from 'axios';
 
 configDotenv()
 
@@ -20,9 +20,11 @@ export const extractAndUpdateData = async (signature: ConfirmedSignatureInfo[]) 
 			if (parsedData.parsed.info.destination == accountPublicKey) {
 				try {
 					const receivedAmount = parsedData.parsed.info.lamports;
-					console.log({ sentFrom: parsedData.parsed.info.source })
-					console.log({ receivedAmount })
-					// update the database for prices via api
+					await axios.post("http://localhost:8000/api/v1/user/update-balance", {
+						secret: process.env.SECRET as string,
+						address: parsedData.parsed.info.source,
+						lamports: receivedAmount
+					})
 				} catch (err) {
 					console.log(err);
 				}

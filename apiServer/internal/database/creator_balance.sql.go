@@ -27,13 +27,13 @@ func (q *Queries) DeductCreatorBalance(ctx context.Context, arg DeductCreatorBal
 }
 
 const getCreatorBalance = `-- name: GetCreatorBalance :one
-select creator_id, lamports from creator_balance
+select creator_id, lamports, creator_pk from creator_balance
 	where creator_id=$1
 `
 
 func (q *Queries) GetCreatorBalance(ctx context.Context, creatorID uuid.UUID) (CreatorBalance, error) {
 	row := q.db.QueryRowContext(ctx, getCreatorBalance, creatorID)
 	var i CreatorBalance
-	err := row.Scan(&i.CreatorID, &i.Lamports)
+	err := row.Scan(&i.CreatorID, &i.Lamports, &i.CreatorPk)
 	return i, err
 }

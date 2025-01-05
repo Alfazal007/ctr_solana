@@ -2,7 +2,8 @@
 create table creator_balance (
 	creator_id uuid primary key,
 	lamports text not null,
-	FOREIGN KEY(creator_id) REFERENCES users(id) on delete cascade
+	creator_pk text,
+  FOREIGN KEY(creator_id) REFERENCES users(id) on delete cascade
 );
 
 create table labeller_balance (
