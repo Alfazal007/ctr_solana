@@ -10,6 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "6.1.0",
+    "@solana/web3.js": "^1.98.0",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "prisma": "^6.1.0",
     "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "web3.js": "link:@types/@solana/web3.js"
   }
 }

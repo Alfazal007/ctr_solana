@@ -64,6 +64,10 @@ type LabellerBalance struct {
 	Lamports   string
 }
 
+type Lastusedblock struct {
+	Lastusedaddress string
+}
+
 type Project struct {
 	ID        uuid.UUID
 	Name      string
