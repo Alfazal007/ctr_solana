@@ -7,9 +7,25 @@ package database
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/google/uuid"
 )
+
+const addPublicKey = `-- name: AddPublicKey :exec
+update creator_balance
+	set creator_pk_bs64=$1 where creator_id=$2
+`
+
+type AddPublicKeyParams struct {
+	CreatorPkBs64 sql.NullString
+	CreatorID     uuid.UUID
+}
+
+func (q *Queries) AddPublicKey(ctx context.Context, arg AddPublicKeyParams) error {
+	_, err := q.db.ExecContext(ctx, addPublicKey, arg.CreatorPkBs64, arg.CreatorID)
+	return err
+}
 
 const deductCreatorBalance = `-- name: DeductCreatorBalance :exec
 update creator_balance
@@ -27,13 +43,25 @@ func (q *Queries) DeductCreatorBalance(ctx context.Context, arg DeductCreatorBal
 }
 
 const getCreatorBalance = `-- name: GetCreatorBalance :one
-select creator_id, lamports, creator_pk from creator_balance
+select creator_id, lamports, creator_pk_bs64 from creator_balance
 	where creator_id=$1
 `
 
 func (q *Queries) GetCreatorBalance(ctx context.Context, creatorID uuid.UUID) (CreatorBalance, error) {
 	row := q.db.QueryRowContext(ctx, getCreatorBalance, creatorID)
 	var i CreatorBalance
-	err := row.Scan(&i.CreatorID, &i.Lamports, &i.CreatorPk)
+	err := row.Scan(&i.CreatorID, &i.Lamports, &i.CreatorPkBs64)
+	return i, err
+}
+
+const getCreatorBalanceViaPK = `-- name: GetCreatorBalanceViaPK :one
+select creator_id, lamports, creator_pk_bs64 from creator_balance
+	where creator_pk_bs64=$1
+`
+
+func (q *Queries) GetCreatorBalanceViaPK(ctx context.Context, creatorPkBs64 sql.NullString) (CreatorBalance, error) {
+	row := q.db.QueryRowContext(ctx, getCreatorBalanceViaPK, creatorPkBs64)
+	var i CreatorBalance
+	err := row.Scan(&i.CreatorID, &i.Lamports, &i.CreatorPkBs64)
 	return i, err
 }

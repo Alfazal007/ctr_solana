@@ -2,7 +2,7 @@
 create table creator_balance (
 	creator_id uuid primary key,
 	lamports text not null,
-	creator_pk text,
+	creator_pk_bs64 text,
   FOREIGN KEY(creator_id) REFERENCES users(id) on delete cascade
 );
 

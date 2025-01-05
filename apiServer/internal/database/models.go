@@ -55,9 +55,9 @@ func (ns NullUserRole) Value() (driver.Value, error) {
 }
 
 type CreatorBalance struct {
-	CreatorID uuid.UUID
-	Lamports  string
-	CreatorPk sql.NullString
+	CreatorID     uuid.UUID
+	Lamports      string
+	CreatorPkBs64 sql.NullString
 }
 
 type LabellerBalance struct {

@@ -1,6 +1,7 @@
 import web3, { ConfirmedSignatureInfo, ParsedInstruction } from '@solana/web3.js';
 import { configDotenv } from 'dotenv';
 import axios from 'axios';
+import bs58 from "bs58"
 
 configDotenv()
 
@@ -20,9 +21,12 @@ export const extractAndUpdateData = async (signature: ConfirmedSignatureInfo[]) 
 			if (parsedData.parsed.info.destination == accountPublicKey) {
 				try {
 					const receivedAmount = parsedData.parsed.info.lamports;
+					const buffer: Uint8Array = bs58.decode(parsedData.parsed.info.source as string);
+					// Encode to Base64
+					const base64PK = Buffer.from(buffer).toString("base64");
 					await axios.post("http://localhost:8000/api/v1/user/update-balance", {
 						secret: process.env.SECRET as string,
-						address: parsedData.parsed.info.source,
+						address: base64PK,
 						lamports: receivedAmount
 					})
 				} catch (err) {

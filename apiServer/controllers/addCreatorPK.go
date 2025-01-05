@@ -3,15 +3,13 @@ package controllers
 import (
 	"crypto/ed25519"
 	"crypto/sha256"
+	"database/sql"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/Alfazal007/ctr_solana/helpers"
 	"github.com/Alfazal007/ctr_solana/internal/database"
-	"github.com/google/uuid"
 )
 
 type RequstBody struct {
@@ -20,10 +18,11 @@ type RequstBody struct {
 }
 
 func (apiCfg *ApiConf) AddCreatorPK(w http.ResponseWriter, r *http.Request) {
-	// Parse string to UUID (assuming this is hardcoded)
-	uuidStr := "550e8400-e29b-41d4-a716-446655440000"
-	id, _ := uuid.Parse(uuidStr)
-	creator := database.User{ID: id, Username: "someone", Password: "smoe"}
+	creator, ok := r.Context().Value("user").(database.User)
+	if !ok {
+		helpers.RespondWithError(w, 400, "Invalid user")
+		return
+	}
 
 	// Decode the request body
 	var requestBody RequstBody
@@ -36,12 +35,16 @@ func (apiCfg *ApiConf) AddCreatorPK(w http.ResponseWriter, r *http.Request) {
 	// Decode the signature from Base64
 	signature, err := base64.StdEncoding.DecodeString(requestBody.Signature)
 	if err != nil {
-		log.Fatal("Failed to decode Base64 signature:", err)
+		helpers.RespondWithError(w, 400, "Invalid signature")
+		return
 	}
 
 	// Decode the public key from Base64
-	pk, _ := base64.StdEncoding.DecodeString(requestBody.PublicKey)
-
+	pk, err := base64.StdEncoding.DecodeString(requestBody.PublicKey)
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Invalid public key")
+		return
+	}
 	// Hash the UUID string with the "SOLANA" prefix
 	message := "SOLANA" + creator.ID.String()
 	hash := sha256.New()
@@ -51,12 +54,19 @@ func (apiCfg *ApiConf) AddCreatorPK(w http.ResponseWriter, r *http.Request) {
 	// Verify the signature using Ed25519
 	valid := ed25519.Verify(ed25519.PublicKey(pk), hashedMessage, signature)
 	if !valid {
-		fmt.Println("Wrong")
 		helpers.RespondWithError(w, 400, "Invalid signature")
 		return
 	}
-
-	// If valid, respond with a success message
-	fmt.Println("Correct")
+	// insert into database
+	err = apiCfg.DB.AddPublicKey(r.Context(), database.AddPublicKeyParams{
+		CreatorPkBs64: sql.NullString{
+			Valid: true, String: requestBody.PublicKey,
+		},
+		CreatorID: creator.ID,
+	})
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Issue adding pk to the database")
+		return
+	}
 	helpers.RespondWithJSON(w, 200, []string{})
 }

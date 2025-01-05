@@ -10,7 +10,6 @@ import (
 	"github.com/Alfazal007/ctr_solana/helpers"
 	"github.com/Alfazal007/ctr_solana/internal/database"
 	"github.com/Alfazal007/ctr_solana/utils"
-	"github.com/google/uuid"
 )
 
 type RequestBodyStruct struct {
@@ -31,7 +30,7 @@ func (apiCfg *ApiConf) IncreaseBalance(w http.ResponseWriter, r *http.Request) {
 		helpers.RespondWithError(w, 400, "Invalid api secret")
 		return
 	}
-	creatorId, err := uuid.Parse(requestBody.Address)
+	creatorAddress := requestBody.Address
 	if err != nil {
 		helpers.RespondWithError(w, 400, "Invalid address")
 		return
@@ -43,7 +42,9 @@ func (apiCfg *ApiConf) IncreaseBalance(w http.ResponseWriter, r *http.Request) {
 	}
 	defer tx.Rollback()
 	txContextQueuries := apiCfg.DB.WithTx(tx)
-	creatorBalance, err := txContextQueuries.GetCreatorBalance(r.Context(), creatorId)
+	creatorBalance, err := txContextQueuries.GetCreatorBalanceViaPK(r.Context(), sql.NullString{
+		Valid: true, String: creatorAddress,
+	})
 	if err != nil {
 		helpers.RespondWithError(w, 400, "Issue talking to the database")
 		return
