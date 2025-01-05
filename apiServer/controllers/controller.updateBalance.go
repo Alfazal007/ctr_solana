@@ -9,6 +9,7 @@ import (
 
 	"github.com/Alfazal007/ctr_solana/helpers"
 	"github.com/Alfazal007/ctr_solana/internal/database"
+	"github.com/Alfazal007/ctr_solana/utils"
 	"github.com/google/uuid"
 )
 
@@ -24,6 +25,10 @@ func (apiCfg *ApiConf) IncreaseBalance(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(requestBody)
 	if err != nil || requestBody.Address == "" || requestBody.Lamports == "" || requestBody.Secret == "" {
 		helpers.RespondWithError(w, 400, "")
+		return
+	}
+	if requestBody.Secret != utils.LoadEnvVariables().ApiSecret {
+		helpers.RespondWithError(w, 400, "Invalid api secret")
 		return
 	}
 	creatorId, err := uuid.Parse(requestBody.Address)
