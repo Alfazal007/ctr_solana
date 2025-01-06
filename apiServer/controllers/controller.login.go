@@ -17,6 +17,7 @@ type ReturnLoginType struct {
 	AccessToken string `json:"accessToken"`
 	Id          string `json:"id"`
 	Username    string `json:"username"`
+	UserType    string `json:"userType"`
 }
 
 func (apiCfg *ApiConf) LoginUser(w http.ResponseWriter, r *http.Request) {
@@ -64,5 +65,6 @@ func (apiCfg *ApiConf) LoginUser(w http.ResponseWriter, r *http.Request) {
 			AccessToken: accessToken,
 			Id:          requiredUser.ID.String(),
 			Username:    requiredUser.Username,
+			UserType:    string(requiredUser.Role.UserRole),
 		})
 }
