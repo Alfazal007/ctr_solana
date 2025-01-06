@@ -70,6 +70,41 @@ func (q *Queries) EndProject(ctx context.Context, id uuid.UUID) (Project, error)
 	return i, err
 }
 
+const getCreatorProjects = `-- name: GetCreatorProjects :many
+select id, name, started, completed, creator_id, votes from project
+	where creator_id=$1
+`
+
+func (q *Queries) GetCreatorProjects(ctx context.Context, creatorID uuid.UUID) ([]Project, error) {
+	rows, err := q.db.QueryContext(ctx, getCreatorProjects, creatorID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Project
+	for rows.Next() {
+		var i Project
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Started,
+			&i.Completed,
+			&i.CreatorID,
+			&i.Votes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getExistingProject = `-- name: GetExistingProject :one
 select id, name, started, completed, creator_id, votes from project
 	where name=$1

@@ -55,7 +55,7 @@ func (apiCfg *ApiConf) LoginUser(w http.ResponseWriter, r *http.Request) {
 		Name:     "accessToken",
 		Value:    accessToken,
 		HttpOnly: true,
-		Secure:   false,
+		Secure:   true,
 		SameSite: http.SameSiteNoneMode,
 		Path:     "/",
 	}

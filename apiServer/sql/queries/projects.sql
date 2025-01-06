@@ -29,3 +29,6 @@ select count(*) from project
 update project set votes=$1
 	where id=$2;
 
+-- name: GetCreatorProjects :many
+select * from project
+	where creator_id=$1;
