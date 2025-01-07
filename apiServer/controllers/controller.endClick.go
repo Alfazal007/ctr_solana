@@ -36,11 +36,11 @@ func (apiCfg *ApiConf) EndVote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !project.Started.Bool {
-		helpers.RespondWithError(w, 200, "Not started yet")
+		helpers.RespondWithError(w, 400, "Not started yet")
 		return
 	}
 	if project.Completed.Bool {
-		helpers.RespondWithError(w, 200, "Already terminated")
+		helpers.RespondWithError(w, 400, "Already terminated")
 		return
 	}
 	_, err = apiCfg.DB.EndProject(r.Context(), project.ID)

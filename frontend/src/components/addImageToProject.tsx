@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Upload } from 'lucide-react'
 import Navbar from './Navbar';
 
-interface Project {
+export interface Project {
 	name: string
 	id: string
 	creatorId: string
@@ -93,6 +93,27 @@ const AddImageToProject = () => {
 		}
 	}
 
+	async function startProject() {
+		if (!project) {
+			toast({
+				title: "Project not found",
+				variant: "destructive"
+			})
+			return
+		}
+		try {
+			const startProjectResponse = await axios.put(`http://localhost:8000/api/v1/project/start/${project.id}`, {}, { withCredentials: true })
+			if (startProjectResponse.status != 200) {
+				toast({ title: "issue starting the project", variant: "destructive" })
+			} else {
+				toast({ title: "Started the project voting" })
+				navigate("/")
+			}
+		} catch (err) {
+			toast({ title: "issue starting the project", variant: "destructive" })
+		}
+	}
+
 	return (
 		<>
 			{
@@ -141,6 +162,13 @@ const AddImageToProject = () => {
 									disabled={!selectedFile}
 								>
 									Upload Image
+								</Button>
+								<Button
+									onClick={startProject}
+									disabled={project?.started}
+									className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+								>
+									Start project
 								</Button>
 							</form>
 						</div>

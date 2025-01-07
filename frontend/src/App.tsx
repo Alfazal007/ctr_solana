@@ -7,6 +7,7 @@ import Logout from './components/logout';
 import CreateNewProject from './components/createNewProject';
 import AddImageToProject from './components/addImageToProject';
 import TaskCardList from './components/getMyProjects';
+import EndProject from './components/endProject';
 
 export interface User {
 	accessToken: string;
@@ -44,6 +45,10 @@ export default function App() {
 		{
 			path: "/my-projects",
 			element: <TaskCardList />
+		},
+		{
+			path: "/end-project/:projectId",
+			element: <EndProject />
 		}
 	]);
 
