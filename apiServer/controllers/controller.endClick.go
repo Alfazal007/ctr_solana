@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/Alfazal007/ctr_solana/helpers"
 	"github.com/Alfazal007/ctr_solana/internal/database"
@@ -43,9 +45,42 @@ func (apiCfg *ApiConf) EndVote(w http.ResponseWriter, r *http.Request) {
 		helpers.RespondWithError(w, 400, "Already terminated")
 		return
 	}
-	_, err = apiCfg.DB.EndProject(r.Context(), project.ID)
+	// =====================
+	tx, err := apiCfg.SQLDB.BeginTx(r.Context(), &sql.TxOptions{})
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Issue creating the transaction")
+		return
+	}
+	defer tx.Rollback()
+	txContextQueuries := apiCfg.DB.WithTx(tx)
+	creatorBalance, err := txContextQueuries.GetCreatorBalance(r.Context(), project.CreatorID)
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Issue getting creator balance")
+		return
+	}
+	balanceOfCreatorInI64, err := strconv.ParseInt(creatorBalance.Lamports, 10, 64)
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Issue converting the balance from string")
+		return
+	}
+	newBalance := balanceOfCreatorInI64 - 100000000
+	newCreatorBalance := strconv.FormatInt(newBalance, 10)
+	err = txContextQueuries.DeductCreatorBalance(r.Context(), database.DeductCreatorBalanceParams{
+		Lamports:  newCreatorBalance,
+		CreatorID: project.CreatorID,
+	})
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Issue deducting the balance of creator")
+		return
+	}
+	_, err = txContextQueuries.EndProject(r.Context(), project.ID)
 	if err != nil {
 		helpers.RespondWithError(w, 400, "Issue starting the project")
+		return
+	}
+	err = tx.Commit()
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Issue committing the transaction")
 		return
 	}
 	helpers.RespondWithJSON(w, 200, []string{})

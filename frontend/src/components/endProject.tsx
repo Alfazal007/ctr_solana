@@ -49,6 +49,7 @@ const EndProject = () => {
 				return
 			}
 			toast({ title: "Ended the project successfully" })
+			navigate("/")
 		} catch (err) {
 			toast({ title: "Issue ending the project", variant: "destructive" })
 		}
