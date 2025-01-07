@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { Project } from "./addImageToProject"
 import { UserContext } from "@/context/UserContext"
 import { Button } from "./ui/button"
+import Navbar from "./Navbar"
 
 const EndProject = () => {
 	const [project, setProject] = useState<Project | null>(null)
@@ -56,15 +57,23 @@ const EndProject = () => {
 	}
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-800">
-			<Button
-				onClick={endProject}
-				size="lg"
-				className="bg-blue-900 text-white border-none hover:bg-blue-900 hover:text-white"
-			>
-				End Project
-			</Button>
-		</div>
+		<>
+			{
+				user &&
+				<>
+					<Navbar userType={user.userType} />
+					<div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-800">
+						<Button
+							onClick={endProject}
+							size="lg"
+							className="bg-blue-900 text-white border-none hover:bg-blue-900 hover:text-white"
+						>
+							End Project
+						</Button>
+					</div>
+				</>
+			}
+		</>
 	)
 }
 

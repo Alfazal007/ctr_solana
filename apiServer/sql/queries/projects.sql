@@ -32,3 +32,4 @@ update project set votes=$1
 -- name: GetCreatorProjects :many
 select * from project
 	where creator_id=$1;
+

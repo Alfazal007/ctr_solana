@@ -8,6 +8,7 @@ import CreateNewProject from './components/createNewProject';
 import AddImageToProject from './components/addImageToProject';
 import TaskCardList from './components/getMyProjects';
 import EndProject from './components/endProject';
+import CreatorSideProject from './components/creatorSideProject';
 
 export interface User {
 	accessToken: string;
@@ -49,6 +50,10 @@ export default function App() {
 		{
 			path: "/end-project/:projectId",
 			element: <EndProject />
+		},
+		{
+			path: "/project/:projectId",
+			element: <CreatorSideProject />
 		}
 	]);
 

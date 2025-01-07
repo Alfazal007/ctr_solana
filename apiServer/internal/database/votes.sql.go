@@ -46,3 +46,49 @@ func (q *Queries) GetExistingVote(ctx context.Context, arg GetExistingVoteParams
 	err := row.Scan(&i.VoterID, &i.ProjectID, &i.PublicID)
 	return i, err
 }
+
+const getVotesForProject = `-- name: GetVotesForProject :many
+SELECT
+    v.public_id,
+    COUNT(v.public_id) AS vote_count,
+    pi.secure_url
+		FROM
+			votes v
+			JOIN
+				project_images pi
+				ON v.public_id = pi.public_id
+				WHERE
+					v.project_id = $1
+					GROUP BY
+						v.public_id,
+						pi.secure_url
+`
+
+type GetVotesForProjectRow struct {
+	PublicID  string
+	VoteCount int64
+	SecureUrl string
+}
+
+func (q *Queries) GetVotesForProject(ctx context.Context, projectID uuid.UUID) ([]GetVotesForProjectRow, error) {
+	rows, err := q.db.QueryContext(ctx, getVotesForProject, projectID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetVotesForProjectRow
+	for rows.Next() {
+		var i GetVotesForProjectRow
+		if err := rows.Scan(&i.PublicID, &i.VoteCount, &i.SecureUrl); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
