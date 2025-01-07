@@ -3,6 +3,7 @@ import { toast } from "@/hooks/use-toast"
 import axios from "axios"
 import { useContext, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import Navbar from "./Navbar"
 
 interface ProjectImage {
 	secureUrl: string
@@ -46,9 +47,52 @@ const VoteProject = () => {
 		fetchData()
 	}, [])
 
+	async function vote() {
+		// TODO:: complete this
+	}
+
 	return (
-		<div>VoteProject {JSON.stringify(imageUrls)} </div>
+		<>
+			{
+				user && <>
+					<Navbar userType={user.userType} />
+					<div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
+						<div className="max-w-7xl mx-auto">
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+								{imageUrls.map((image, index) => (
+									<div onClick={vote}>
+										<Image
+											key={index}
+											src={image.secureUrl}
+											alt={"Image"}
+										/>
+									</div>
+								))}
+							</div>
+						</div>
+					</div>
+				</>
+			}
+		</>
 	)
 }
 
 export default VoteProject
+
+interface ImageProps {
+	src: string;
+	alt: string;
+}
+
+function Image({ src, alt }: ImageProps) {
+	return (
+		<div className="relative">
+			<img
+				src={src}
+				alt={alt}
+				className="w-full h-auto rounded-lg object-cover"
+			/>
+		</div>
+	);
+}
+

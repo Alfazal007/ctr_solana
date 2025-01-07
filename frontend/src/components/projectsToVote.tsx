@@ -57,7 +57,7 @@ export default function TaskCardListToVote() {
 						<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 							{tasks.map((task) => (
 								<Card onClick={() => {
-									navigate(`/project/vote/${task.id}`)
+									navigate(`/solve-task/${task.id}`)
 								}} key={task.id} className="bg-gray-800 text-white cursor-pointer">
 									<CardContent className="p-6">
 										<h3 className="text-xl font-semibold mb-4">{task.name}</h3>

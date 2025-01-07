@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/Alfazal007/ctr_solana/helpers"
@@ -51,11 +52,13 @@ func (apiCfg *ApiConf) GetProjectToVote(w http.ResponseWriter, r *http.Request) 
 	})
 
 	if err == sql.ErrNoRows {
+		fmt.Println("Here")
 		projectImages, err := apiCfg.DB.GetProjectImages(r.Context(), project.ID)
 		if err != nil {
 			helpers.RespondWithError(w, 400, "Issue finding the project data")
 			return
 		}
+		fmt.Println(projectImages)
 		helpers.RespondWithJSON(w, 200, typeconvertor.ProjectImageData(projectImages))
 		return
 	}
