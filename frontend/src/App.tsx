@@ -10,6 +10,7 @@ import TaskCardList from './components/getMyProjects';
 import EndProject from './components/endProject';
 import CreatorSideProject from './components/creatorSideProject';
 import VoteProject from './components/voteProject';
+import TaskCardListToVote from './components/projectsToVote';
 
 export interface User {
 	accessToken: string;
@@ -59,6 +60,10 @@ export default function App() {
 		{
 			path: "/solve-task/:projectId",
 			element: <VoteProject />
+		},
+		{
+			path: "/projects-to-vote",
+			element: <TaskCardListToVote />
 		}
 	]);
 

@@ -33,3 +33,11 @@ update project set votes=$1
 select * from project
 	where creator_id=$1;
 
+-- name: FetchProjectsToVote :many
+SELECT p.id, p.name
+FROM project p
+LEFT JOIN votes v 
+  ON p.id = v.project_id
+  AND v.voter_id = $1
+WHERE v.project_id IS NULL  AND p.completed=false AND p.started=true;
+

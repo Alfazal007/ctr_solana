@@ -18,5 +18,6 @@ func ProjectRouter(apiCfg *controllers.ApiConf) *chi.Mux {
 	r.Post("/vote/{projectId}", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.CreateVote)).ServeHTTP)
 	r.Get("/projects", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.GetCreatorProjects)).ServeHTTP)
 	r.Get("/result/{projectId}", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.VotedProjects)).ServeHTTP)
+	r.Get("/projectsToVote", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.ProjectsToVote)).ServeHTTP)
 	return r
 }

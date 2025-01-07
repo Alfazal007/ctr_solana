@@ -70,6 +70,43 @@ func (q *Queries) EndProject(ctx context.Context, id uuid.UUID) (Project, error)
 	return i, err
 }
 
+const fetchProjectsToVote = `-- name: FetchProjectsToVote :many
+SELECT p.id, p.name
+FROM project p
+LEFT JOIN votes v 
+  ON p.id = v.project_id
+  AND v.voter_id = $1
+WHERE v.project_id IS NULL  AND p.completed=false AND p.started=true
+`
+
+type FetchProjectsToVoteRow struct {
+	ID   uuid.UUID
+	Name string
+}
+
+func (q *Queries) FetchProjectsToVote(ctx context.Context, voterID uuid.UUID) ([]FetchProjectsToVoteRow, error) {
+	rows, err := q.db.QueryContext(ctx, fetchProjectsToVote, voterID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FetchProjectsToVoteRow
+	for rows.Next() {
+		var i FetchProjectsToVoteRow
+		if err := rows.Scan(&i.ID, &i.Name); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getCreatorProjects = `-- name: GetCreatorProjects :many
 select id, name, started, completed, creator_id, votes from project
 	where creator_id=$1

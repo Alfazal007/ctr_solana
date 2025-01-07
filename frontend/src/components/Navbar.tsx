@@ -10,7 +10,7 @@ const Navbar = ({ userType }: { userType: "creator" | "labeller" }) => {
 		{ name: 'Home', href: '/', icon: Home },
 		{ name: userType == "creator" ? 'Transfer Money' : 'Take out money', href: '/transfer', icon: DollarSign },
 		{ name: 'Logout', href: '/logout', icon: LogOut },
-		{ name: userType == "creator" ? "My Projects" : "", href: userType === "creator" ? "/my-projects" : "#", icon: userType == "creator" ? Folders : X }
+		{ name: userType == "creator" ? "My Projects" : "Projects to vote", href: userType === "creator" ? "/my-projects" : "/projects-to-vote", icon: Folders }
 	]
 
 	return (
