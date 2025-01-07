@@ -10,6 +10,7 @@ import (
 func ProjectRouter(apiCfg *controllers.ApiConf) *chi.Mux {
 	r := chi.NewRouter()
 	r.Get("/{projectId}", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.GetProjectInfo)).ServeHTTP)
+	r.Get("/labeller/{projectId}", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.GetProjectToVote)).ServeHTTP)
 	r.Post("/create-project", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.CreateNewCTR)).ServeHTTP)
 	r.Post("/add-image/{projectId}", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.GetUrlToUploadImage)).ServeHTTP)
 	r.Put("/start/{projectId}", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.StartVote)).ServeHTTP)

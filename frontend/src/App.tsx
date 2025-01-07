@@ -9,6 +9,7 @@ import AddImageToProject from './components/addImageToProject';
 import TaskCardList from './components/getMyProjects';
 import EndProject from './components/endProject';
 import CreatorSideProject from './components/creatorSideProject';
+import VoteProject from './components/voteProject';
 
 export interface User {
 	accessToken: string;
@@ -54,6 +55,10 @@ export default function App() {
 		{
 			path: "/project/:projectId",
 			element: <CreatorSideProject />
+		},
+		{
+			path: "/solve-task/:projectId",
+			element: <VoteProject />
 		}
 	]);
 
