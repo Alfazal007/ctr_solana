@@ -14,8 +14,9 @@ func UserRouter(apiCfg *controllers.ApiConf) *chi.Mux {
 
 	r.Get("/current-user", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.CurrentUser)).ServeHTTP)
 	r.Post("/update-balance", apiCfg.IncreaseBalance)
-	r.Post("/verify", apiCfg.AddCreatorPK)
+	r.Post("/verify", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.AddCreatorPK)).ServeHTTP)
 	r.Get("/balance", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.FetchBalance)).ServeHTTP)
+	r.Get("/publicKey", controllers.VerifyJWT(apiCfg, http.HandlerFunc(apiCfg.GetPublicKey)).ServeHTTP)
 	r.Post("/logout", apiCfg.Logout)
 	return r
 }

@@ -18,6 +18,7 @@ import {
 	WalletModalProvider,
 } from '@solana/wallet-adapter-react-ui';
 import '@solana/wallet-adapter-react-ui/styles.css';
+import WalletConnectPublicKey from './components/publicKeyRegister';
 
 export interface User {
 	accessToken: string;
@@ -90,7 +91,7 @@ export default function App() {
 				<ConnectionProvider endpoint={import.meta.env.VITE_SOLANA_ENDPOINT}>
 					<WalletProvider wallets={[]} autoConnect>
 						<WalletModalProvider>
-							<div>Adding public key</div>
+							<WalletConnectPublicKey />
 						</WalletModalProvider>
 					</WalletProvider>
 				</ConnectionProvider>

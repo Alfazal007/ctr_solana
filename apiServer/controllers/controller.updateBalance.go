@@ -31,10 +31,7 @@ func (apiCfg *ApiConf) IncreaseBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	creatorAddress := requestBody.Address
-	if err != nil {
-		helpers.RespondWithError(w, 400, "Invalid address")
-		return
-	}
+
 	tx, err := apiCfg.SQLDB.BeginTx(r.Context(), &sql.TxOptions{})
 	if err != nil {
 		helpers.RespondWithError(w, 400, "Issue creating the transaction")

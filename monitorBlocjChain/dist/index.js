@@ -13,14 +13,10 @@ const GetTransactions_1 = require("./GetTransactions");
 const UpdateParsedTx_1 = require("./UpdateParsedTx");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        //	await prisma.lastusedblock.deleteMany()
-        //	await prisma.lastusedblock.create({
-        //		data: {
-        //			lastusedaddress: "2bH2QKuJRqyRTDcbrSmhFY1FaQsxYUqrTgpxH1hRkq5tzAYyMvaeAWNseBHKTcuT4bn9i5HYNDuUA7Xe7n8RwU8R"
-        //		}
-        //	})
-        let signatures = yield (0, GetTransactions_1.checkActivity)();
-        yield (0, UpdateParsedTx_1.extractAndUpdateData)(signatures);
+        setInterval(() => __awaiter(this, void 0, void 0, function* () {
+            let signatures = yield (0, GetTransactions_1.checkActivity)();
+            yield (0, UpdateParsedTx_1.extractAndUpdateData)(signatures);
+        }), 120000);
     });
 }
 main();
