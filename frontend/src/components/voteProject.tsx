@@ -7,6 +7,7 @@ import Navbar from "./Navbar"
 
 interface ProjectImage {
 	secureUrl: string
+	publicId: string
 }
 
 const VoteProject = () => {
@@ -47,8 +48,19 @@ const VoteProject = () => {
 		fetchData()
 	}, [])
 
-	async function vote() {
-		// TODO:: complete this
+	async function vote(publicId: string) {
+		const voteUrl = `http://localhost:8000/api/v1/project/vote/${projectId}`
+		try {
+			const voteResponse = await axios.post(voteUrl, {
+				publicId
+			}, { withCredentials: true })
+			toast({ title: "Voted successfully" })
+			console.log({ voteResponse })
+		} catch (err) {
+			toast({ title: "Issue voting", variant: "destructive" })
+		} finally {
+			navigate("/")
+		}
 	}
 
 	return (
@@ -57,10 +69,11 @@ const VoteProject = () => {
 				user && <>
 					<Navbar userType={user.userType} />
 					<div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
+						<div className="text-xl text-white text-center m-4">Click on an image to vote it</div>
 						<div className="max-w-7xl mx-auto">
-							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 cursor-pointer">
 								{imageUrls.map((image, index) => (
-									<div onClick={vote}>
+									<div onClick={() => { vote(image.publicId) }}>
 										<Image
 											key={index}
 											src={image.secureUrl}
