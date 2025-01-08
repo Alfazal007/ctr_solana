@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Alfazal007/ctr_solana/helpers"
@@ -36,5 +37,10 @@ func (apiCfg *ApiConf) VotedProjects(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	votes_and_public_id, err := apiCfg.DB.GetVotesForProject(r.Context(), project.ID)
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Issue talking to the database")
+		return
+	}
+	fmt.Println(votes_and_public_id)
 	helpers.RespondWithJSON(w, 200, typeconvertor.VotesMany(votes_and_public_id))
 }

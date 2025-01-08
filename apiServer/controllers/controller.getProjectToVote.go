@@ -58,7 +58,6 @@ func (apiCfg *ApiConf) GetProjectToVote(w http.ResponseWriter, r *http.Request) 
 			helpers.RespondWithError(w, 400, "Issue finding the project data")
 			return
 		}
-		fmt.Println(projectImages)
 		helpers.RespondWithJSON(w, 200, typeconvertor.ProjectImageData(projectImages))
 		return
 	}

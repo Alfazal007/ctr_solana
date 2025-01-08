@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Menu, X, Plus, Home, DollarSign, LogOut, Folders } from 'lucide-react'
+import { Menu, X, Plus, Home, DollarSign, LogOut, Folders, Key } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const Navbar = ({ userType }: { userType: "creator" | "labeller" }) => {
@@ -10,6 +10,7 @@ const Navbar = ({ userType }: { userType: "creator" | "labeller" }) => {
 		{ name: 'Home', href: '/', icon: Home },
 		{ name: userType == "creator" ? 'Transfer Money' : 'Take out money', href: '/transfer', icon: DollarSign },
 		{ name: 'Logout', href: '/logout', icon: LogOut },
+		{ name: 'Add Public Key', href: '/add-public-key', icon: Key },
 		{ name: userType == "creator" ? "My Projects" : "Projects to vote", href: userType === "creator" ? "/my-projects" : "/projects-to-vote", icon: Folders }
 	]
 

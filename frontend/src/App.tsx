@@ -11,6 +11,13 @@ import EndProject from './components/endProject';
 import CreatorSideProject from './components/creatorSideProject';
 import VoteProject from './components/voteProject';
 import TaskCardListToVote from './components/projectsToVote';
+import CreatorTransfer from './components/creatorTransferPage';
+
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import {
+	WalletModalProvider,
+} from '@solana/wallet-adapter-react-ui';
+import '@solana/wallet-adapter-react-ui/styles.css';
 
 export interface User {
 	accessToken: string;
@@ -64,6 +71,30 @@ export default function App() {
 		{
 			path: "/projects-to-vote",
 			element: <TaskCardListToVote />
+		},
+		{
+			path: "/transfer",
+			element: <>
+				<ConnectionProvider endpoint={import.meta.env.VITE_SOLANA_ENDPOINT}>
+					<WalletProvider wallets={[]} autoConnect>
+						<WalletModalProvider>
+							<CreatorTransfer />
+						</WalletModalProvider>
+					</WalletProvider>
+				</ConnectionProvider>
+			</>
+		},
+		{
+			path: "/add-public-key",
+			element: <>
+				<ConnectionProvider endpoint={import.meta.env.VITE_SOLANA_ENDPOINT}>
+					<WalletProvider wallets={[]} autoConnect>
+						<WalletModalProvider>
+							<div>Adding public key</div>
+						</WalletModalProvider>
+					</WalletProvider>
+				</ConnectionProvider>
+			</>
 		}
 	]);
 

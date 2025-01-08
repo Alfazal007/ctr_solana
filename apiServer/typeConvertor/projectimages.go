@@ -6,6 +6,7 @@ import (
 
 type ProjectImage struct {
 	SecureUrl string `json:"secureUrl"`
+	PublicID  string `json:"publicId"`
 }
 
 func ProjectImageData(projects []database.ProjectImage) []ProjectImage {
@@ -13,6 +14,7 @@ func ProjectImageData(projects []database.ProjectImage) []ProjectImage {
 	for i := 0; i < len(projects); i++ {
 		projectsToBeReturned = append(projectsToBeReturned, ProjectImage{
 			SecureUrl: projects[i].SecureUrl,
+			PublicID:  projects[i].PublicID,
 		})
 	}
 	return projectsToBeReturned
