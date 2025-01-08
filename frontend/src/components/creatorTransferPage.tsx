@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom"
 import Navbar from "./Navbar"
 import axios from "axios"
 import { toast } from "@/hooks/use-toast"
-import { useWallet } from "@solana/wallet-adapter-react"
+import { useConnection, useWallet } from "@solana/wallet-adapter-react"
+import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 
 const CreatorTransfer = () => {
 	const { user } = useContext(UserContext)
@@ -13,6 +14,7 @@ const CreatorTransfer = () => {
 	const [balance, setBalance] = useState(0);
 	const [transferAmount, setTransferAmount] = useState('');
 	const wallet = useWallet()
+	const { connection } = useConnection()
 
 	useEffect(() => {
 		if (!user) {
@@ -20,6 +22,27 @@ const CreatorTransfer = () => {
 		}
 		fetchCreatorBalance()
 	}, [])
+
+	async function transfer() {
+		if (!wallet.publicKey) {
+			return
+		}
+		let to = "4UH3DAq7tC8SX2GwuJ7P4muZo6DKjmyqUe3oVD4Es1rG";
+		const transaction = new Transaction();
+		transaction.add(SystemProgram.transfer({
+			fromPubkey: wallet.publicKey,
+			toPubkey: new PublicKey(to),
+			lamports: parseInt(transferAmount) * LAMPORTS_PER_SOL,
+		}));
+		try {
+			await wallet.sendTransaction(transaction, connection);
+			toast({ title: "Transfer done" })
+		} catch (err) {
+			toast({ title: "Issue transferring the amount", variant: "destructive" })
+		} finally {
+			setTransferAmount("")
+		}
+	}
 
 	async function fetchCreatorBalance() {
 		let balanceResponse;
@@ -49,7 +72,7 @@ const CreatorTransfer = () => {
 						<Navbar userType={user.userType} />
 						<div className="container mx-auto px-4 py-8">
 							<div className="bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
-								<h2 className="text-3xl font-bold mb-4">Wallet</h2>
+								<h2 className="text-3xl font-bold mb-4">Wallet (Make sure to send from same address as in (Add Public Key page), if not update it and then send</h2>
 								<div className="flex space-x-4 mb-6">
 									<WalletMultiButton className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" />
 									<WalletDisconnectButton className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded" />
@@ -65,12 +88,12 @@ const CreatorTransfer = () => {
 											type="number"
 											value={transferAmount}
 											onChange={(e) => setTransferAmount(e.target.value)}
-											placeholder="Amount to transfer"
+											placeholder="Amount to transfer(in sol)"
 											className="flex-grow bg-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 										/>
 										<button
 											disabled={!wallet.connected}
-											onClick={() => { }}
+											onClick={transfer}
 											className={`
     font-bold py-2 px-6 rounded-lg transition duration-300
     ${wallet.connected

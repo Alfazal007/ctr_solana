@@ -10,7 +10,7 @@ const Navbar = ({ userType }: { userType: "creator" | "labeller" }) => {
 		{ name: 'Home', href: '/', icon: Home },
 		{ name: userType == "creator" ? 'Transfer Money' : 'Take out money', href: '/transfer', icon: DollarSign },
 		{ name: 'Logout', href: '/logout', icon: LogOut },
-		{ name: 'Add Public Key', href: '/add-public-key', icon: Key },
+		{ name: userType == "creator" ? 'Add Public Key' : "", href: userType == "creator" ? '/add-public-key' : "#", icon: userType == "creator" ? Key : X },
 		{ name: userType == "creator" ? "My Projects" : "Projects to vote", href: userType === "creator" ? "/my-projects" : "/projects-to-vote", icon: Folders }
 	]
 

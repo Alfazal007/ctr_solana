@@ -98,6 +98,11 @@ export default function WalletConnectPublicKey() {
 	useEffect(() => {
 		if (!user) {
 			navigate("/signin")
+			return
+		}
+		if (user?.userType != "creator") {
+			navigate("/")
+			return
 		}
 		fetchIsPublicKeyData()
 	}, [])
@@ -107,7 +112,7 @@ export default function WalletConnectPublicKey() {
 			{
 				user && <>
 					<Navbar userType={user.userType} />
-					<div className="min-h-screen bg-gray-900 flex items-center justify-center">
+					<div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
 						<div className="bg-gray-800 p-8 rounded-lg shadow-xl max-w-md w-full">
 							<h1 className="text-2xl font-bold text-white mb-6 text-center">Wallet Connection</h1>
 
@@ -116,8 +121,7 @@ export default function WalletConnectPublicKey() {
 								<WalletDisconnectButton className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full" />
 							</div>
 
-							{
-								!publicKeyFromDB &&
+							{!publicKeyFromDB && (
 								<Button
 									onClick={handleStorePublicKey}
 									className="mt-4 w-full bg-purple-500 hover:bg-purple-600 text-white"
@@ -125,15 +129,15 @@ export default function WalletConnectPublicKey() {
 								>
 									Store Public Key
 								</Button>
-							}
-							{
-								publicKeyFromDB &&
-								<h1 className="text-xl font-bold text-white mb-6 text-center">{publicKeyFromDB}</h1>
-							}
+							)}
+							{publicKeyFromDB && (
+								<div className="mt-4 p-2 bg-gray-700 rounded-md">
+									<p className="text-sm text-gray-300 break-all">{publicKeyFromDB}</p>
+								</div>
+							)}
 						</div>
 					</div>
-				</>
-			}
+				</>}
 		</>
 	)
 }
