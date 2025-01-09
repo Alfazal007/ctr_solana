@@ -11,6 +11,20 @@ import (
 	"github.com/google/uuid"
 )
 
+const deductBalance = `-- name: DeductBalance :exec
+update labeller_balance set lamports=$1 where labeller_id=$2
+`
+
+type DeductBalanceParams struct {
+	Lamports   string
+	LabellerID uuid.UUID
+}
+
+func (q *Queries) DeductBalance(ctx context.Context, arg DeductBalanceParams) error {
+	_, err := q.db.ExecContext(ctx, deductBalance, arg.Lamports, arg.LabellerID)
+	return err
+}
+
 const getLabellerBalance = `-- name: GetLabellerBalance :one
 select labeller_id, lamports from labeller_balance
 	where labeller_id=$1

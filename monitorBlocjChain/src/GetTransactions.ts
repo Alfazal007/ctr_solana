@@ -1,7 +1,10 @@
 import web3 from '@solana/web3.js';
 import { prisma } from './prisma';
+import { configDotenv } from 'dotenv';
 
-const connection = new web3.Connection("https://solana-devnet.g.alchemy.com/v2/216966e_5zv1_orNIihK4tmKzwdFsTJm", 'confirmed');
+configDotenv()
+
+const connection = new web3.Connection(process.env.CONNECTIONURL as string, 'confirmed');
 const address = new web3.PublicKey('4UH3DAq7tC8SX2GwuJ7P4muZo6DKjmyqUe3oVD4Es1rG');
 
 export async function checkActivity(): Promise<web3.ConfirmedSignatureInfo[]> {

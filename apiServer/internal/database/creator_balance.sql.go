@@ -65,3 +65,18 @@ func (q *Queries) GetCreatorBalanceViaPK(ctx context.Context, creatorPkBs64 sql.
 	err := row.Scan(&i.CreatorID, &i.Lamports, &i.CreatorPkBs64)
 	return i, err
 }
+
+const insertCreatorBalance = `-- name: InsertCreatorBalance :exec
+INSERT INTO creator_balance (creator_id, lamports)
+	VALUES ($1, $2)
+`
+
+type InsertCreatorBalanceParams struct {
+	CreatorID uuid.UUID
+	Lamports  string
+}
+
+func (q *Queries) InsertCreatorBalance(ctx context.Context, arg InsertCreatorBalanceParams) error {
+	_, err := q.db.ExecContext(ctx, insertCreatorBalance, arg.CreatorID, arg.Lamports)
+	return err
+}

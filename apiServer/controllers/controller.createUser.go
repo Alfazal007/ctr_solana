@@ -63,7 +63,16 @@ func (apiCfg *ApiConf) CreateUser(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	user, err := apiCfg.DB.CreateUser(r.Context(), database.CreateUserParams{
+	tx, err := apiCfg.SQLDB.BeginTx(r.Context(), &sql.TxOptions{})
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Issue creating the transaction")
+		return
+	}
+	defer tx.Rollback()
+
+	txContextQueuries := apiCfg.DB.WithTx(tx)
+
+	user, err := txContextQueuries.CreateUser(r.Context(), database.CreateUserParams{
 		ID:       uuid.New(),
 		Username: createUserBody.Username,
 		Password: hashedPassword,
@@ -74,5 +83,20 @@ func (apiCfg *ApiConf) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if user.Role.UserRole == database.UserRoleCreator {
+		err = txContextQueuries.InsertCreatorBalance(r.Context(), database.InsertCreatorBalanceParams{
+			CreatorID: user.ID,
+			Lamports:  "0",
+		})
+		if err != nil {
+			helpers.RespondWithError(w, 400, "Issue creating the account")
+			return
+		}
+	}
+	err = tx.Commit()
+	if err != nil {
+		helpers.RespondWithError(w, 400, "Issue committing the transaction")
+		return
+	}
 	helpers.RespondWithJSON(w, 201, typeconvertor.UserConvertor(user))
 }

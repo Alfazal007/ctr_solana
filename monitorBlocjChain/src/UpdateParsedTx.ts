@@ -27,7 +27,7 @@ export const extractAndUpdateData = async (signature: ConfirmedSignatureInfo[]) 
 					await axios.post("http://localhost:8000/api/v1/user/update-balance", {
 						secret: process.env.SECRET as string,
 						address: base64PK,
-						lamports: receivedAmount
+						lamports: receivedAmount + ""
 					})
 				} catch (err) {
 					console.log(err);

@@ -7,6 +7,7 @@ import axios from "axios"
 import { toast } from "@/hooks/use-toast"
 import { useConnection, useWallet } from "@solana/wallet-adapter-react"
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import bs58 from "bs58"
 
 const CreatorTransfer = () => {
 	const { user } = useContext(UserContext)
@@ -15,6 +16,9 @@ const CreatorTransfer = () => {
 	const [transferAmount, setTransferAmount] = useState('');
 	const wallet = useWallet()
 	const { connection } = useConnection()
+
+	const { publicKey } = useWallet()
+	const { signMessage } = useWallet()
 
 	useEffect(() => {
 		if (!user) {
@@ -62,6 +66,69 @@ const CreatorTransfer = () => {
 			})
 		}
 	}
+
+	async function withdraw() {
+		try {
+			await handleStorePublicKey()
+		} catch (err) {
+			toast({
+				title: "Issue withdrawing money",
+				variant: "destructive"
+			})
+		} finally {
+			navigate("/")
+		}
+	}
+
+	// functions for signing the tx
+	const handleStorePublicKey = async () => {
+		if (publicKey && user && signMessage) {
+			console.log('Storing public key:', publicKey.toBase58())
+			const publicKeyToRegister = base58ToBase64(publicKey.toBase58())
+			const message = user.id
+			const encodedMessage = new TextEncoder().encode(message);
+			const signature = await signMessage(encodedMessage);
+			const messageToRegister = uint8ArrayToBase64(signature)
+			try {
+				const addPK = await axios.post("http://localhost:8000/api/v1/user/withdraw",
+					{
+						signature: messageToRegister,
+						publicKey: publicKeyToRegister
+					},
+					{ withCredentials: true })
+				if (addPK.status == 200) {
+					toast({
+						title: "Initiated request successfully"
+					})
+				}
+			} catch (err) {
+				toast({ title: "Issue validating wallet" })
+			}
+		} else {
+			toast({ title: "Make sure wallet is connected and try again" })
+		}
+	}
+
+	function uint8ArrayToBase64(uint8Array: Uint8Array) {
+		let binary = '';
+		for (let i = 0; i < uint8Array.length; i++) {
+			binary += String.fromCharCode(uint8Array[i]);
+		}
+		return btoa(binary);
+	}
+
+	function base58ToBase64(base58String: string) {
+		const byteArray = bs58.decode(base58String);
+		const base64String = btoa(String.fromCharCode(...byteArray));
+		return base64String;
+	}
+
+	function base64ToBase58(base64String: string) {
+		const buffer = Buffer.from(base64String, 'base64');
+		return bs58.encode(buffer);
+	}
+
+
 
 
 	return (
@@ -111,7 +178,7 @@ const CreatorTransfer = () => {
 									user.userType != "creator" &&
 									<button
 										disabled={!wallet.connected}
-										onClick={() => { }}
+										onClick={withdraw}
 										className={`
     font-bold py-2 px-6 rounded-lg transition duration-300
     ${wallet.connected

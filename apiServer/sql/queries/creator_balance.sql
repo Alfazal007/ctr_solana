@@ -13,3 +13,8 @@ update creator_balance
 -- name: GetCreatorBalanceViaPK :one
 select * from creator_balance
 	where creator_pk_bs64=$1;
+
+-- name: InsertCreatorBalance :exec
+INSERT INTO creator_balance (creator_id, lamports)
+	VALUES ($1, $2);
+
